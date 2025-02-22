@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  publisher:
+    image: andriiuni/events
+    container_name: events-container
+    environment:
+      EVENT_ENDPOINT: $EVENT_ENDPOINT
+    ports:
+      - "8080:80"
+    restart: always
+    
