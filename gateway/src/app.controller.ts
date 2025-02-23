@@ -7,7 +7,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post()
-  handleEvents(@Body() body: EventType[]): string {
-    return this.appService.handleEvents(body);
+  async handleEvents(@Body() body: EventType[]): Promise<string> {
+    return await this.appService.handleEvents(body);
   }
 }
