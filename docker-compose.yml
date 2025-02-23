@@ -1,6 +1,23 @@
 version: '3.8'
 
 services:
+  nats:
+    image: nats:alpine
+    container_name: nats
+    restart: always
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - nats_data:/data
+    command: [
+      "-js",
+      "-sd", "/data",
+      "-m", "8222"
+    ]
+    networks:
+      - events-network
+
   publisher:
     image: andriiuni/events
     container_name: events-container
@@ -9,4 +26,28 @@ services:
     ports:
       - "8080:80"
     restart: always
-    
+    networks:
+      - events-network
+
+  gateway:
+    container_name: gateway-service
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+      target: ${NODE_ENV:-development}
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      NATS_SERVER_URL: ${NATS_SERVER_URL}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - publisher
+    networks:
+      - events-network
+
+volumes:
+  nats_data:
+
+networks:
+  events-network:
+    driver: bridge
