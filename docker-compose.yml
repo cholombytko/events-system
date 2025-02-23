@@ -9,4 +9,16 @@ services:
     ports:
       - "8080:80"
     restart: always
-    
+
+  gateway:
+    container_name: gateway-service
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+      target: ${NODE_ENV:-development}
+    environment:
+      NODE_ENV: ${NODE_ENV}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - publisher 
