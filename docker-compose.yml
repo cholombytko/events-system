@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   nats:
-    image: nats:alpine
+    image: nats:2.10.7
     container_name: nats
     restart: always
     ports:
@@ -42,11 +42,47 @@ services:
       - "3000:3000"
     depends_on:
       - publisher
+      - nats
+    networks:
+      - events-network
+
+  fb-collector:
+    container_name: fb-collector-service
+    build:
+      context: ./fb-collector-service
+      dockerfile: Dockerfile
+      target: ${NODE_ENV:-development}
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      NATS_SERVER_URL: ${NATS_SERVER_URL}
+      DB_URL: ${DB_URL}
+    ports:
+      - "3001:3000"
+    depends_on:
+      - gateway
+      - postgres
+      - nats
+    networks:
+      - events-network
+
+  postgres:
+    image: postgres:16
+    container_name: postgres_container
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
     networks:
       - events-network
 
 volumes:
   nats_data:
+  pg_data:
 
 networks:
   events-network:
