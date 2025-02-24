@@ -13,24 +13,9 @@ model FacebookEvent {
   id          String   @id @default(uuid())
   eventId     String   @unique
   timestamp   DateTime @db.Timestamp()
-  funnelStage FunnelStage
-  eventType   FacebookEventType
+  funnelStage String
+  eventType   String
   data        Json
 
   @@map("facebookevent")
-}
-
-enum FunnelStage {
-  top
-  bottom
-}
-
-enum FacebookEventType {
-  ad_view
-  page_like
-  comment
-  video_view
-  ad_click
-  form_submission
-  checkout_complete
 }
