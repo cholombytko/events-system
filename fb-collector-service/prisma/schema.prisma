@@ -10,9 +10,9 @@ generator client {
 }
 
 model FacebookEvent {
-  id          String   @id @default(uuid())
-  eventId     String   @unique
+  eventId     String   @id @unique
   timestamp   DateTime @db.Timestamp()
+  source      String
   funnelStage String
   eventType   String
   data        Json
