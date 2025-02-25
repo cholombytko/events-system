@@ -1,6 +1,6 @@
 import { Controller, Post } from '@nestjs/common';
-import { FacebookEventsService } from './services/facebook-events.service';
-//import { FacebookEvent } from '@prisma/client';
+import { TiktokEventsService } from './services/tiktok-events.service';
+//import { TiktokEvent } from '@myorg/prisma';
 // import {
 //   FacebookEventSchema,
 //   FacebookEventType,
@@ -11,7 +11,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 export class AppController {
   constructor(
     @InjectPinoLogger(AppController.name) private readonly logger: PinoLogger,
-    private readonly appService: FacebookEventsService,
+    private readonly appService: TiktokEventsService,
   ) {}
 
   @Post()

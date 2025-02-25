@@ -65,6 +65,25 @@ services:
     networks:
       - events-network
 
+  ttk-collector:
+    container_name: ttk-collector-service
+    build:
+      context: ./ttk-collector-service
+      dockerfile: Dockerfile
+      target: ${NODE_ENV:-development}
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      NATS_SERVER_URL: ${NATS_SERVER_URL}
+      DB_URL: ${DB_URL}
+    ports:
+      - "3002:3000"
+    depends_on:
+      - gateway
+      - postgres
+      - nats
+    networks:
+      - events-network
+
   postgres:
     image: postgres:16
     container_name: postgres_container

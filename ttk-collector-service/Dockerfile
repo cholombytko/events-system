@@ -5,8 +5,6 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma"]
-
 FROM node:20 AS development
 WORKDIR /app
 COPY --from=dependencies /app .
