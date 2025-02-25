@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { EventType } from 'src/schemas/event.schema';
 import { Writable } from 'stream';
 import { NatsService } from '../providers/nats-service';
+import { MetricsService } from 'src/metrics/metrics.service';
+import { MetricsTypes } from '@prisma/client';
 
 @Injectable()
 export class PublisherStream extends Writable {
-  constructor(private readonly natsService: NatsService) {
+  constructor(
+    private readonly natsService: NatsService,
+    private readonly metricsService: MetricsService,
+  ) {
     super({
       objectMode: true,
       write: (chunk: EventType, _, callback) => {
@@ -14,6 +19,10 @@ export class PublisherStream extends Writable {
           .publishToStream(streamName, chunk)
           .then(() => {
             console.log(`Successfully published to ${streamName}\n`);
+            this.metricsService.incCounter(
+              'processed_events',
+              MetricsTypes.processed_events,
+            );
             callback();
           })
           .catch((error) => {
