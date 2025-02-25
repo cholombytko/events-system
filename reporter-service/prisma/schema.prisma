@@ -30,3 +30,14 @@ model TiktokEvent {
 
   @@map("tiktokevent")
 }
+
+model Metrics {
+  type MetricsTypes @unique
+  value Int @default(0)
+}
+
+enum MetricsTypes {
+  accepted_events
+  processed_events
+  failed_events
+}
