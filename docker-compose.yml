@@ -84,6 +84,23 @@ services:
     networks:
       - events-network
 
+  reporter:
+    container_name: reporter-service
+    build:
+      context: ./reporter-service
+      dockerfile: Dockerfile
+      target: ${NODE_ENV:-development}
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      DB_URL: ${DB_URL}
+    ports:
+      - "3003:3000"
+    depends_on:
+      - postgres
+      - nats
+    networks:
+      - events-network
+
   postgres:
     image: postgres:16
     container_name: postgres_container
