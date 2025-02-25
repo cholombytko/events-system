@@ -45,7 +45,7 @@ export class NatsService implements OnModuleInit, OnModuleDestroy {
   private async setupStreams() {
     const streamConfigs = this.streams.map((streamName) => ({
       name: streamName,
-      subjects: [`${streamName}.${this.SUBJECT_SUFFIX}`],
+      subjects: [`${streamName}.*`],
       retention: RetentionPolicy.Limits,
       storage: StorageType.File,
       max_msgs: this.MAX_MESSAGES,
@@ -75,7 +75,7 @@ export class NatsService implements OnModuleInit, OnModuleDestroy {
     try {
       const message = this.sc.encode(JSON.stringify(event));
       const subject = `${streamName}.${this.SUBJECT_SUFFIX}`;
-      await this.js.publish(subject, message);
+      await this.js.publish(subject, message, { msgID: event.eventId });
       console.log(`Event successfully published to ${streamName} stream.`);
     } catch (error) {
       console.error(`Error publishing to ${streamName}`, error);

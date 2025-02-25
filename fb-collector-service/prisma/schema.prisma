@@ -1,0 +1,21 @@
+// schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model FacebookEvent {
+  eventId     String   @id @unique
+  timestamp   DateTime @db.Timestamp()
+  source      String
+  funnelStage String
+  eventType   String
+  data        Json
+
+  @@map("facebookevent")
+}
