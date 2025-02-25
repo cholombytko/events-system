@@ -11,6 +11,7 @@ import {
   StorageType,
 } from 'nats';
 import { EventType } from '../schemas/event.schema';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class NatsService implements OnModuleInit, OnModuleDestroy {
@@ -22,7 +23,10 @@ export class NatsService implements OnModuleInit, OnModuleDestroy {
   private readonly SUBJECT_SUFFIX: string = 'events';
   private readonly MAX_MESSAGES = 1000000;
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    @InjectPinoLogger(NatsService.name) private readonly logger: PinoLogger,
+    private readonly configService: ConfigService,
+  ) {}
 
   async onModuleInit() {
     await this.init();
@@ -60,7 +64,7 @@ export class NatsService implements OnModuleInit, OnModuleDestroy {
     const exists = await this.streamExists(config.name);
     if (!exists) {
       await this.jsm.streams.add(config);
-      console.log(`Stream ${config.name} created`);
+      this.logger.info(`Stream ${config.name} created`);
     }
   }
 
@@ -76,9 +80,9 @@ export class NatsService implements OnModuleInit, OnModuleDestroy {
       const message = this.sc.encode(JSON.stringify(event));
       const subject = `${streamName}.${this.SUBJECT_SUFFIX}`;
       await this.js.publish(subject, message, { msgID: event.eventId });
-      console.log(`Event successfully published to ${streamName} stream.`);
+      this.logger.info(`Event successfully published to ${streamName} stream.`);
     } catch (error) {
-      console.error(`Error publishing to ${streamName}`, error);
+      this.logger.error(`Error publishing to ${streamName}`, error);
     }
   }
 

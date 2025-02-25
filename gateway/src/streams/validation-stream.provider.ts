@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { MetricsTypes } from '@prisma/client';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { MetricsService } from 'src/metrics/metrics.service';
 import { EventType, EventSchema } from 'src/schemas/event.schema';
 import { Transform } from 'stream';
 
 @Injectable()
 export class ValidationStream extends Transform {
-  constructor(private readonly metricsService: MetricsService) {
+  constructor(
+    @InjectPinoLogger(ValidationStream.name)
+    private readonly logger: PinoLogger,
+    private readonly metricsService: MetricsService,
+  ) {
     super({
       objectMode: true,
       transform: async (chunk: EventType, _, callback) => {
@@ -18,7 +23,7 @@ export class ValidationStream extends Transform {
         if (result.success) {
           callback(null, chunk);
         } else {
-          console.error(`Validation error ${result.error}\n`);
+          this.logger.error(`Validation error ${result.error}\n`);
           this.metricsService.incCounter(
             'failed_events',
             MetricsTypes.failed_events,

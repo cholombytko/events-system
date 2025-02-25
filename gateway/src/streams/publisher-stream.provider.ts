@@ -4,10 +4,12 @@ import { Writable } from 'stream';
 import { NatsService } from '../providers/nats-service';
 import { MetricsService } from 'src/metrics/metrics.service';
 import { MetricsTypes } from '@prisma/client';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class PublisherStream extends Writable {
   constructor(
+    @InjectPinoLogger(PublisherStream.name) private readonly logger: PinoLogger,
     private readonly natsService: NatsService,
     private readonly metricsService: MetricsService,
   ) {
@@ -18,7 +20,7 @@ export class PublisherStream extends Writable {
         this.natsService
           .publishToStream(streamName, chunk)
           .then(() => {
-            console.log(`Successfully published to ${streamName}\n`);
+            this.logger.info(`Successfully published to ${streamName}\n`);
             this.metricsService.incCounter(
               'processed_events',
               MetricsTypes.processed_events,
@@ -26,7 +28,10 @@ export class PublisherStream extends Writable {
             callback();
           })
           .catch((error) => {
-            console.error(`Error publishing to ${chunk.source} stream:`, error);
+            this.logger.error(
+              `Error publishing to ${chunk.source} stream:`,
+              error,
+            );
             callback(error);
           });
       },
