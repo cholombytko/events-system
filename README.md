@@ -19,5 +19,6 @@ More concrete changes I would like to make:
 I'll better to use prom Gauge on service level with ```eventsArray.length```. It would reduce unnecessary bd operations and operations inside stream
 2) Instead of giving constant name for consumer here: https://github.com/cholombytko/events-system/blob/bc8be7ecbfd192115b1d97876d8e723948380a7b/fb-collector-service/src/services/nats-consumer.service.ts#L23
 I'll better to generate one. It would make this service possible to horizontally scale.
+Also delete consumer here: https://github.com/cholombytko/events-system/blob/e9363aacfcbfd71eae871bf494767a3d133c5e66/fb-collector-service/src/services/nats-consumer.service.ts#L96-L102
 3) Get rid of source column in db, because data is storen in separate tables for each source: https://github.com/cholombytko/events-system/blob/bc8be7ecbfd192115b1d97876d8e723948380a7b/prisma/schema.prisma#L15
 4) Use node streams instead of reduce and other array operations: reporter-service/src/app.service.ts
