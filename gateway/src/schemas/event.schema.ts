@@ -42,7 +42,7 @@ const FacebookUserLocationSchema = z.object({
 // Facebook User schema
 const FacebookUserSchema = z.object({
   userId: z.string(),
-  name: z.string(),
+  name: z.string().min(1),
   age: z.number().positive().int().max(120),
   gender: z.enum(['male', 'female', 'non-binary']),
   location: FacebookUserLocationSchema,
@@ -84,8 +84,8 @@ const FacebookEventSchema = z.object({
 // Tiktok User schema
 const TiktokUserSchema = z.object({
   userId: z.string(),
-  username: z.string(),
-  followers: z.number().min(0).int(),
+  username: z.string().min(1),
+  followers: z.number().int().min(0),
 });
 
 // Tiktok Engagement schemas
