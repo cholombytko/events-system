@@ -4,6 +4,8 @@ import { EventType } from './schemas/event.schema';
 import { ValidationStream } from './streams/validation-stream.provider';
 import { PublisherStream } from './streams/publisher-stream.provider';
 import { LoggingStream } from './streams/logging-stream.provider';
+import { MetricsService } from './metrics/metrics.service';
+import { MetricsTypes } from '@prisma/client';
 
 @Injectable()
 export class AppService {
@@ -13,9 +15,16 @@ export class AppService {
     private readonly validationStream: ValidationStream,
     private readonly publisherStream: PublisherStream,
     private readonly loggingStream: LoggingStream,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async handleEvents(data: EventType[]): Promise<string> {
+    await this.metricsService.setGauge(
+      'accepted_events',
+      MetricsTypes.accepted_events,
+      data.length,
+    );
+
     const readable = Readable.from(data, { objectMode: true });
 
     this.publisherStream.setMaxListeners(this.MAX_LISTENERS);

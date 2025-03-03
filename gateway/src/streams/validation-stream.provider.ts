@@ -15,10 +15,6 @@ export class ValidationStream extends Transform {
     super({
       objectMode: true,
       transform: async (chunk: EventType, _, callback) => {
-        this.metricsService.incCounter(
-          'accepted_events',
-          MetricsTypes.accepted_events,
-        );
         const result = EventSchema.safeParse(chunk);
         if (result.success) {
           callback(null, chunk);
