@@ -16,11 +16,10 @@ export class PublisherStream extends Writable {
     super({
       objectMode: true,
       write: (chunk: EventType, _, callback) => {
-        const streamName = chunk.source;
         this.natsService
-          .publishToStream(streamName, chunk)
+          .publishToStream(chunk)
           .then(() => {
-            this.logger.info(`Successfully published to ${streamName}\n`);
+            this.logger.info(`Successfully published to ${chunk.source}\n`);
             this.metricsService.incCounter(
               'processed_events',
               MetricsTypes.processed_events,

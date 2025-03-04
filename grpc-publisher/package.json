@@ -1,0 +1,19 @@
+{
+  "name": "grpc-publisher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.12.6",
+    "dotenv": "^16.4.7",
+    "google-protobuf": "^3.21.4",
+    "protobufjs": "^7.4.0",
+    "uuid": "^11.1.0"
+  }
+}

@@ -9,6 +9,7 @@ import { LoggingStream } from './streams/logging-stream.provider';
 import { MetricsController } from './metrics/metrics.controller';
 import { MetricsModule } from './metrics/metrics.module';
 import { LoggerModule } from 'nestjs-pino';
+import { GrpcService } from './providers/grpc-service';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { LoggerModule } from 'nestjs-pino';
     ValidationStream,
     PublisherStream,
     LoggingStream,
+    GrpcService,
   ],
 })
 export class AppModule {}
