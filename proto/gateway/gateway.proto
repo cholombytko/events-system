@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package gateway;
+
+import "google/protobuf/struct.proto";
+
+service GatewayService {
+	rpc HandleEvent (Event) returns (HandleEventResponse);
+}
+
+message Event {
+	string eventId = 1;
+  string timestamp = 2;
+  string source = 3;
+  string funnelStage = 4;
+  string eventType = 5;
+	string data = 6;
+}
+
+message HandleEventResponse {
+	string message = 1;
+}

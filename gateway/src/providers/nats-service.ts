@@ -75,7 +75,8 @@ export class NatsService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
-  async publishToStream(streamName: string, event: EventType): Promise<void> {
+  async publishToStream(event: EventType): Promise<void> {
+    const streamName = event.source;
     try {
       const message = this.sc.encode(JSON.stringify(event));
       const subject = `${streamName}.${this.SUBJECT_SUFFIX}`;

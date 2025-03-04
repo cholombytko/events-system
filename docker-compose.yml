@@ -18,16 +18,31 @@ services:
     networks:
       - events-network
 
-  publisher:
-    image: andriiuni/events
-    container_name: events-container
+  # publisher:
+  #   image: andriiuni/events
+  #   container_name: events-container
+  #   environment:
+  #     EVENT_ENDPOINT: $EVENT_ENDPOINT
+  #   ports:
+  #     - "8080:80"
+  #   restart: always
+  #   networks:
+  #     - events-network
+
+  grpc-publisher:
+    build:
+      context: ./grpc-publisher
+      dockerfile: Dockerfile
     environment:
-      EVENT_ENDPOINT: $EVENT_ENDPOINT
+      GRPC_SERVER_URL: ${GRPC_SERVER_FOR_CLIENT_URL}
     ports:
-      - "8080:80"
-    restart: always
+      - "3005:3000"
+    depends_on:
+      - gateway
     networks:
       - events-network
+    volumes:
+      - ./proto:/proto
 
   gateway:
     container_name: gateway-service
@@ -38,13 +53,17 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       NATS_SERVER_URL: ${NATS_SERVER_URL}
+      GRPC_SERVER_URL: ${GRPC_SERVER_URL}
     ports:
       - "3000:3000"
+      - "50051:50051"
     depends_on:
-      - publisher
+      # - publisher
       - nats
     networks:
       - events-network
+    volumes:
+      - ./proto:/proto
 
   fb-collector:
     container_name: fb-collector-service
